@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grozily Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #6200ee;
+            --primary-light: #bb86fc;
+            --secondary-color: #03dac6;
+            --dark-color: #121212;
+            --light-color: #f8f9fa;
+            --danger-color: #cf6679;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f7;
+            overflow-x: hidden;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-brand {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .sidebar-menu {
+            padding: 15px 0;
+        }
+        
+        .sidebar-menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .sidebar-menu-item:hover, .sidebar-menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .sidebar-menu-item i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .card-title {
+            font-weight: 600;
+        }
+        
+        .stats-card {
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .total-users {
+            border-color: var(--primary-color);
+        }
+        
+        .today-users {
+            border-color: var(--success-color);
+        }
+        
+        .month-users {
+            border-color: var(--warning-color);
+        }
+        
+        .pending-orders {
+            border-color: var(--info-color);
+        }
+        
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        .stats-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stats-count {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 300px;
+        }
+        
+        .search-box input {
+            border-radius: 50px;
+            padding-left: 40px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: #aaa;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .banner-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .banner-preview {
+            position: relative;
+            border: 3px solid var(--primary-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            background-color: white;
+            height: 200px;
+        }
+        
+        .banner-preview-label {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1;
+        }
+        
+        .banner-advertisement-label {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 2px;
+            font-weight: 500;
+            z-index: 2;
+        }
+        
+        .banner-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .banner-status.active {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .banner-status.inactive {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .banner-order {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .user-table {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .user-table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .user-table th {
+            font-weight: 500;
+            padding: 12px 15px;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #5000c1;
+            border-color: #5000c1;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+        }
+        
+        .login-form {
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+        
+        #logoutButton {
+            margin-top: auto;
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-search-container {
+            margin-bottom: 20px;
+        }
+        
+        .badge-today {
+            background-color: var(--success-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+        
+        .badge-week {
+            background-color: var(--info-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+        
+        .badge-month {
+            background-color: var(--primary-light);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Container (shown when not authenticated) -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-form">
+            <h3 class="login-title">Grozily Admin Login</h3>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="adminEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="adminEmail" required>
+                </div>
+                <div class="mb-3">
+                    <label for="adminPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Main Dashboard (hidden until authenticated) -->
+    <div id="mainContent" style="display: none;">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">Grozily</div>
+                <div class="sidebar-brand">Admin Dashboard</div>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#" class="sidebar-menu-item active" data-section="dashboardSection">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#" class="sidebar-menu-item" data-section="usersSection">
+                    <i class="fas fa-users"></i> Users
+                </a>
+                <a href="#" class="sidebar-menu-item" data-section="advertisementSection">
+                    <i class="fas fa-ad"></i> Advertisements
+                </a>
+                <a href="#" class="sidebar-menu-item" data-section="notificationsSection">
+                    <i class="fas fa-bell"></i> Notifications
+                </a>
+                <a href="#" class="sidebar-menu-item" data-section="settingsSection">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </div>
+            <div id="logoutButton" class="sidebar-menu-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 class="page-title" id="currentPageTitle">Dashboard</h1>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=6200ee&color=fff" alt="Admin">
+                    <span>Admin</span>
+                </div>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="content-section active">
+                <!-- Stats Row -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card stats-card total-users">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="stats-icon bg-light">
+                                    <i class="fas fa-users text-primary"></i>
+                                </div>
+                                <div class="stats-details">
+                                    <h2 class="stats-count" id="totalUsersCount">0</h2>
+                                    <span class="stats-label">Total Users</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card today-users">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="stats-icon bg-light">
+                                    <i class="fas fa-user-plus text-success"></i>
+                                </div>
+                                <div class="stats-details">
+                                    <h2 class="stats-count" id="todayUsersCount">0</h2>
+                                    <span class="stats-label">New Today</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card month-users">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="stats-icon bg-light">
+                                    <i class="fas fa-calendar-alt text-warning"></i>
+                                </div>
+                                <div class="stats-details">
+                                    <h2 class="stats-count" id="monthUsersCount">0</h2>
+                                    <span class="stats-label">This Month</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card pending-orders">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="stats-icon bg-light">
+                                    <i class="fas fa-ad text-info"></i>
+                                </div>
+                                <div class="stats-details">
+                                    <h2 class="stats-count" id="activeBannersCount">0</h2>
+                                    <span class="stats-label">Active Ads</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Users Section -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fas fa-user-clock"></i>
+                            Recent Users
+                        </h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Registration Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentUsersList">
+                                    <!-- Recent users will be loaded here -->
+                                    <tr>
+                                        <td colspan="5" class="text-center">Loading recent users...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-end mt-3">
+                            <button class="btn btn-primary btn-sm" id="viewAllUsersBtn">
+                                View All Users <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Advertisements Preview -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fas fa-bullhorn"></i>
+                            Active Advertisements
+                        </h5>
+                        <div class="row" id="activeBannersList">
+                            <!-- Active banners will be loaded here -->
+                            <div class="col-12 text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p>Loading advertisements...</p>
+                            </div>
+                        </div>
+                        <div class="text-end mt-3">
+                            <button class="btn btn-primary btn-sm" id="viewAllAdsBtn">
+                                Manage Advertisements <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Section -->
+            <div id="usersSection" class="content-section">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fas fa-users"></i>
+                            Registered Users
+                        </h5>
+                        
+                        <!-- Search Bar -->
+                        <div class="user-search-container">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" id="userSearchInput" 
+                                    placeholder="Search by email, name or phone...">
+                                <button class="btn btn-primary" id="userSearchBtn">Search</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Loading Indicator -->
+                        <div id="loadingUsers" class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p>Loading users...</p>
+                        </div>
+                        
+                        <!-- Users Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover user-table">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Name</th>
+                                        <th>Phone Number</th>
+                                        <th>Registration Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersList">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advertisements Section -->
+            <div id="advertisementSection" class="content-section">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fas fa-plus-circle"></i>
+                            Add New Advertisement
+                        </h5>
+                        <div class="alert alert-info">
+                            <strong>Note:</strong> Advertisements will display as images with a purple border. 
+                            Title is used for identification only and won't be visible in the app.
+                            An "Advertisement" label will appear in the bottom-right corner of each banner.
+                        </div>
+                        <div class="form-section">
+                            <div class="position-relative mb-4 mt-3">
+                                <span class="banner-preview-label">Preview</span>
+                                <div class="banner-preview" id="banner-preview-container">
+                                    <img id="banner-preview-image" class="banner-image" 
+                                        src="https://via.placeholder.com/600x320/f5f5f5/6c757d?text=Banner+Preview" 
+                                        alt="Banner preview">
+                                    <div class="banner-advertisement-label">Advertisement</div>
+                                </div>
+                            </div>
+                        </div>
+                        <form id="addBannerForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="bannerTitle" class="form-label">Banner Title</label>
+                                    <input type="text" class="form-control" id="bannerTitle" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="bannerOrder" class="form-label">Display Order</label>
+                                    <input type="number" class="form-control" id="bannerOrder" min="1" value="1" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="bannerImageUrl" class="form-label">Image URL</label>
+                                <input type="url" class="form-control" id="bannerImageUrl" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="bannerLinkUrl" class="form-label">Link URL (optional)</label>
+                                <input type="url" class="form-control" id="bannerLinkUrl">
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="bannerActive" checked>
+                                <label class="form-check-label" for="bannerActive">Active</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus-circle me-2"></i>Add Banner
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fas fa-list"></i>
+                            Existing Advertisements
+                        </h5>
+                        <div id="bannersList" class="row">
+                            <!-- Banners will be loaded here -->
+                            <div class="col-12 text-center" id="loadingBanners">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p>Loading banners...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div id="settingsSection" class="content-section">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="section-title">
+                            <i class="fas fa-cog"></i>
+                            Admin Settings
+                        </h5>
+                        <p class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            This section will be used for future admin configurations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Section -->
+            <div id="notificationsSection" class="content-section">
+                <div class="row">
+                    <!-- Compose Notification -->
+                    <div class="col-md-7 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="section-title">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Send Push Notification
+                                </h5>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Notifications will be sent to all users with the app installed, even when their app is closed.
+                                </div>
+                                
+                                <form id="sendNotificationForm">
+                                    <div class="mb-3">
+                                        <label for="notificationTitle" class="form-label">Notification Title</label>
+                                        <input type="text" class="form-control" id="notificationTitle" 
+                                               placeholder="e.g., New Offer!" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="notificationBody" class="form-label">Notification Message</label>
+                                        <textarea class="form-control" id="notificationBody" rows="3" 
+                                                  placeholder="e.g., 20% off on all grocery items today!" required></textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Notification Type</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="notificationType" 
+                                                   id="typeAll" value="all" checked>
+                                            <label class="form-check-label" for="typeAll">
+                                                All Users
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="notificationType" 
+                                                   id="typeNewUsers" value="new">
+                                            <label class="form-check-label" for="typeNewUsers">
+                                                New Users (registered in the last 7 days)
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="notificationType" 
+                                                   id="typeInactive" value="inactive">
+                                            <label class="form-check-label" for="typeInactive">
+                                                Inactive Users (not logged in for 30+ days)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="notificationImage" class="form-label">Image URL (Optional)</label>
+                                        <input type="url" class="form-control" id="notificationImage" 
+                                               placeholder="https://example.com/image.jpg">
+                                        <div class="form-text">Adding an image makes notifications more engaging.</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="notificationAction" class="form-label">Action on Click</label>
+                                        <select class="form-select" id="notificationAction">
+                                            <option value="open_app">Open App</option>
+                                            <option value="open_ads">View Advertisements</option>
+                                            <option value="open_products">View Products</option>
+                                            <option value="open_orders">View Orders</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="scheduleNotification">
+                                        <label class="form-check-label" for="scheduleNotification">Schedule for later</label>
+                                    </div>
+                                    
+                                    <div class="mb-3" id="scheduleTimeContainer" style="display: none;">
+                                        <label for="scheduleTime" class="form-label">Schedule Time</label>
+                                        <input type="datetime-local" class="form-control" id="scheduleTime">
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-2"></i>Send Notification
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <div class="mt-3" id="notificationPreview" style="display: none;">
+                                    <h6 class="text-muted">Preview:</h6>
+                                    <div class="card" style="max-width: 350px; margin: 0 auto;">
+                                        <div class="card-header bg-light d-flex align-items-center">
+                                            <img src="https://ui-avatars.com/api/?name=G&background=6200ee&color=fff" width="20" height="20" class="me-2 rounded">
+                                            <span class="fw-bold">Grozily</span>
+                                            <small class="text-muted ms-auto">now</small>
+                                        </div>
+                                        <div class="card-body preview-card-body p-2">
+                                            <h6 class="preview-title mb-1">Notification Title</h6>
+                                            <p class="preview-body mb-0 small">Notification message will appear here.</p>
+                                            <div class="preview-image-container mt-2" style="display: none;">
+                                                <img class="preview-image img-fluid rounded" src="" alt="Notification image">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Notifications -->
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="section-title">
+                                    <i class="fas fa-history"></i>
+                                    Recent Notifications
+                                </h5>
+                                
+                                <div id="loadingNotifications" class="text-center my-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p>Loading notifications...</p>
+                                </div>
+                                
+                                <div id="notificationsList">
+                                    <!-- Notifications will be loaded here -->
+                                </div>
+                                
+                                <div class="text-center mt-3" id="noNotificationsMessage" style="display: none;">
+                                    <p class="text-muted">No notifications sent yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notification Stats -->
+                        <div class="card mt-4">
+                            <div class="card-body">
+                                <h5 class="section-title">
+                                    <i class="fas fa-chart-bar"></i>
+                                    Notification Analytics
+                                </h5>
+                                
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="border-end">
+                                            <h3 id="totalNotificationsCount">0</h3>
+                                            <small class="text-muted">Total Sent</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="border-end">
+                                            <h3 id="deliveredCount">0</h3>
+                                            <small class="text-muted">Delivered</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div>
+                                            <h3 id="openedCount">0</h3>
+                                            <small class="text-muted">Opened</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Banner Modal -->
+    <div class="modal fade" id="editBannerModal" tabindex="-1" aria-labelledby="editBannerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBannerModalLabel">Edit Advertisement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editBannerForm">
+                        <input type="hidden" id="editBannerId">
+                        
+                        <div class="position-relative mb-4">
+                            <span class="banner-preview-label">Preview</span>
+                            <div class="banner-preview">
+                                <img id="edit-banner-preview-image" class="banner-image" 
+                                    src="https://via.placeholder.com/600x320/f5f5f5/6c757d?text=Banner+Preview" 
+                                    alt="Banner preview">
+                                <div class="banner-advertisement-label">Advertisement</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editBannerTitle" class="form-label">Banner Title</label>
+                            <input type="text" class="form-control" id="editBannerTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBannerImageUrl" class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="editBannerImageUrl" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBannerLinkUrl" class="form-label">Link URL (optional)</label>
+                            <input type="url" class="form-control" id="editBannerLinkUrl">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBannerOrder" class="form-label">Display Order</label>
+                            <input type="number" class="form-control" id="editBannerOrder" min="1" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="editBannerActive">
+                            <label class="form-check-label" for="editBannerActive">Active</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveBannerChanges">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteBannerModal" tabindex="-1" aria-labelledby="deleteBannerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBannerModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Are you sure you want to delete this banner? This action cannot be undone.
+                    </div>
+                    <input type="hidden" id="deleteBannerId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">
+                        <i class="fas fa-trash-alt me-2"></i>Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Details Modal -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userDetailsModalLabel">User Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="userDetailsContent">
+                    <!-- User details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Auth and Database SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDMF4q20GiGPCya5VIn18wZh0kVw6YOhEo",
+            authDomain: "grozily-user.firebaseapp.com",
+            databaseURL: "https://grozily-user-default-rtdb.firebaseio.com",
+            projectId: "grozily-user",
+            storageBucket: "grozily-user.firebasestorage.app",
+            messagingSenderId: "807882408217",
+            appId: "1:807882408217:web:1e5f9321e429fea6468588"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Get a reference to the database
+        const bannersRef = firebase.database().ref('banners');
+        const usersRef = firebase.database().ref('users');
+        
+        // DOM elements
+        const loginForm = document.getElementById('loginForm');
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContent = document.getElementById('mainContent');
+        const addBannerForm = document.getElementById('addBannerForm');
+        const editBannerForm = document.getElementById('editBannerForm');
+        const bannersList = document.getElementById('bannersList');
+        const usersList = document.getElementById('usersList');
+        const recentUsersList = document.getElementById('recentUsersList');
+        const activeBannersList = document.getElementById('activeBannersList');
+        const editBannerModal = new bootstrap.Modal(document.getElementById('editBannerModal'));
+        const deleteBannerModal = new bootstrap.Modal(document.getElementById('deleteBannerModal'));
+        const userDetailsModal = new bootstrap.Modal(document.getElementById('userDetailsModal'));
+        const loadingBanners = document.getElementById('loadingBanners');
+        const loadingUsers = document.getElementById('loadingUsers');
+        const userSearchInput = document.getElementById('userSearchInput');
+        const userSearchBtn = document.getElementById('userSearchBtn');
+        
+        // Stats counters
+        const totalUsersCount = document.getElementById('totalUsersCount');
+        const todayUsersCount = document.getElementById('todayUsersCount');
+        const monthUsersCount = document.getElementById('monthUsersCount');
+        const activeBannersCount = document.getElementById('activeBannersCount');
+        
+        // Navigation elements
+        const sidebarItems = document.querySelectorAll('.sidebar-menu-item[data-section]');
+        const contentSections = document.querySelectorAll('.content-section');
+        const currentPageTitle = document.getElementById('currentPageTitle');
+        const viewAllUsersBtn = document.getElementById('viewAllUsersBtn');
+        const viewAllAdsBtn = document.getElementById('viewAllAdsBtn');
+        
+        // Handle navigation
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all sidebar items
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                
+                // Add active class to clicked item
+                item.classList.add('active');
+                
+                // Get the section to show
+                const sectionId = item.dataset.section;
+                
+                // Hide all sections
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected section
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Update page title
+                currentPageTitle.textContent = item.textContent.trim();
+            });
+        });
+        
+        // Quick navigation buttons
+        viewAllUsersBtn.addEventListener('click', () => {
+            // Simulate clicking the Users nav item
+            document.querySelector('.sidebar-menu-item[data-section="usersSection"]').click();
+        });
+        
+        viewAllAdsBtn.addEventListener('click', () => {
+            // Simulate clicking the Advertisements nav item
+            document.querySelector('.sidebar-menu-item[data-section="advertisementSection"]').click();
+        });
+        
+        // Handle login
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Hide login, show main content
+                    loginContainer.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    
+                    // Load data for dashboard
+                    loadDashboardData();
+                    
+                    showAlert('success', 'Logged in successfully!');
+                })
+                .catch((error) => {
+                    console.error("Login error: ", error);
+                    showAlert('danger', 'Login failed: ' + error.message);
+                });
+        });
+        
+        // Check auth state on load
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                loginContainer.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                // Load data for dashboard
+                loadDashboardData();
+            } else {
+                // User is signed out
+                loginContainer.style.display = 'block';
+                mainContent.style.display = 'none';
+            }
+        });
+        
+        // Load all data needed for the dashboard
+        function loadDashboardData() {
+            loadBanners();
+            loadUsers();
+            loadStats();
+            loadRecentUsers();
+            loadActiveBanners();
+        }
+        
+        // Logout function
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            firebase.auth().signOut()
+                .then(() => {
+                    loginContainer.style.display = 'block';
+                    mainContent.style.display = 'none';
+                    showAlert('success', 'Logged out successfully');
+                })
+                .catch((error) => {
+                    console.error("Logout error: ", error);
+                    showAlert('danger', 'Logout failed: ' + error.message);
+                });
+        });
+        
+        // Load statistics
+        function loadStats() {
+            // Count total users
+            usersRef.once('value')
+                .then((snapshot) => {
+                    const totalUsers = snapshot.numChildren();
+                    totalUsersCount.textContent = totalUsers;
+                    
+                    // Count users registered today and this month
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    
+                    let todayUsers = 0;
+                    let monthUsers = 0;
+                    
+                    snapshot.forEach((childSnapshot) => {
+                        const user = childSnapshot.val();
+                        if (user.registrationDate) {
+                            const regDate = new Date(user.registrationDate);
+                            
+                            if (regDate >= today) {
+                                todayUsers++;
+                            }
+                            
+                            if (regDate >= firstDayOfMonth) {
+                                monthUsers++;
+                            }
+                        }
+                    });
+                    
+                    todayUsersCount.textContent = todayUsers;
+                    monthUsersCount.textContent = monthUsers;
+                })
+                .catch((error) => {
+                    console.error("Error counting users: ", error);
+                });
+                
+            // Count active banners
+            bannersRef.orderByChild('active').equalTo(true).once('value')
+                .then((snapshot) => {
+                    const activeAds = snapshot.numChildren();
+                    activeBannersCount.textContent = activeAds;
+                })
+                .catch((error) => {
+                    console.error("Error counting active banners: ", error);
+                });
+        }
+        
+        // Load recent users for dashboard
+        function loadRecentUsers() {
+            usersRef.limitToLast(5).once('value')
+                .then((snapshot) => {
+                    recentUsersList.innerHTML = '';
+                    
+                    if (!snapshot.exists()) {
+                        recentUsersList.innerHTML = '<tr><td colspan="5" class="text-center">No users found.</td></tr>';
+                        return;
+                    }
+                    
+                    // Convert to array for sorting
+                    let usersArray = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const userId = childSnapshot.key;
+                        const user = childSnapshot.val();
+                        user.id = userId;
+                        usersArray.push(user);
+                    });
+                    
+                    // Sort by registration date (newest first)
+                    usersArray.sort((a, b) => {
+                        return new Date(b.registrationDate || 0) - new Date(a.registrationDate || 0);
+                    });
+                    
+                    // Today and month date checks
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const oneWeekAgo = new Date(today);
+                    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                    
+                    // Display users
+                    usersArray.forEach(user => {
+                        const registrationDate = user.registrationDate ? new Date(user.registrationDate) : null;
+                        const formattedDate = registrationDate ? registrationDate.toLocaleDateString() : 'Unknown';
+                        
+                        let badge = '';
+                        if (registrationDate) {
+                            if (registrationDate >= today) {
+                                badge = '<span class="badge-today">Today</span>';
+                            } else if (registrationDate >= oneWeekAgo) {
+                                badge = '<span class="badge-week">This Week</span>';
+                            } else if (registrationDate >= firstDayOfMonth) {
+                                badge = '<span class="badge-month">This Month</span>';
+                            }
+                        }
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.email || 'No email'}</td>
+                            <td>${user.name || 'No name'}</td>
+                            <td>${user.phoneNumber || 'No phone'}</td>
+                            <td>${formattedDate} ${badge}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-user" data-id="${user.id}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        `;
+                        
+                        recentUsersList.appendChild(row);
+                    });
+                    
+                    // Add event listeners to view user buttons
+                    document.querySelectorAll('.view-user').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const userId = e.target.closest('.view-user').dataset.id;
+                            showUserDetails(userId);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading recent users: ", error);
+                    recentUsersList.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error loading users.</td></tr>';
+                });
+        }
+        
+        // Load active banners for dashboard preview
+        function loadActiveBanners() {
+            bannersRef.orderByChild('active').equalTo(true).limitToFirst(3).once('value')
+                .then((snapshot) => {
+                    activeBannersList.innerHTML = '';
+                    
+                    if (!snapshot.exists()) {
+                        activeBannersList.innerHTML = '<div class="col-12 text-center"><p>No active advertisements found.</p></div>';
+                        return;
+                    }
+                    
+                    snapshot.forEach((childSnapshot) => {
+                        const bannerId = childSnapshot.key;
+                        const banner = childSnapshot.val();
+                        
+                        const bannerCard = document.createElement('div');
+                        bannerCard.className = 'col-md-4 mb-4';
+                        bannerCard.innerHTML = `
+                            <div class="card h-100">
+                                <div class="position-relative">
+                                    <div class="banner-preview">
+                                        <img src="${banner.imageUrl}" class="banner-image" alt="${banner.title}">
+                                        <span class="banner-order">${banner.order}</span>
+                                        <div class="banner-advertisement-label">Advertisement</div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">${banner.title}</h5>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            Order: ${banner.order}
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                        
+                        activeBannersList.appendChild(bannerCard);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error loading active banners: ", error);
+                    activeBannersList.innerHTML = '<div class="col-12 text-center text-danger">Error loading banners.</div>';
+                });
+        }
+        
+        // Load users with search capability
+        function loadUsers(searchTerm = '') {
+            loadingUsers.style.display = 'block';
+            usersList.innerHTML = '';
+            
+            usersRef.once('value')
+                .then((snapshot) => {
+                    loadingUsers.style.display = 'none';
+                    
+                    if (!snapshot.exists()) {
+                        usersList.innerHTML = '<tr><td colspan="5" class="text-center">No users found.</td></tr>';
+                        return;
+                    }
+                    
+                    // Convert to array for filtering and sorting
+                    let usersArray = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const userId = childSnapshot.key;
+                        const user = childSnapshot.val();
+                        user.id = userId;
+                        usersArray.push(user);
+                    });
+                    
+                    // Sort by registration date (newest first)
+                    usersArray.sort((a, b) => {
+                        return new Date(b.registrationDate || 0) - new Date(a.registrationDate || 0);
+                    });
+                    
+                    // Filter by search term if provided
+                    if (searchTerm) {
+                        const term = searchTerm.toLowerCase();
+                        usersArray = usersArray.filter(user => {
+                            return (user.email && user.email.toLowerCase().includes(term)) ||
+                                   (user.name && user.name.toLowerCase().includes(term)) ||
+                                   (user.phoneNumber && user.phoneNumber.includes(term));
+                        });
+                        
+                        if (usersArray.length === 0) {
+                            usersList.innerHTML = `<tr><td colspan="5" class="text-center">No users found matching "${searchTerm}".</td></tr>`;
+                            return;
+                        }
+                    }
+                    
+                    // Today and month date checks for badges
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const oneWeekAgo = new Date(today);
+                    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                    
+                    // Display users
+                    usersArray.forEach(user => {
+                        const registrationDate = user.registrationDate ? new Date(user.registrationDate) : null;
+                        const formattedDate = registrationDate ? registrationDate.toLocaleDateString() : 'Unknown';
+                        
+                        let badge = '';
+                        if (registrationDate) {
+                            if (registrationDate >= today) {
+                                badge = '<span class="badge-today">Today</span>';
+                            } else if (registrationDate >= oneWeekAgo) {
+                                badge = '<span class="badge-week">This Week</span>';
+                            } else if (registrationDate >= firstDayOfMonth) {
+                                badge = '<span class="badge-month">This Month</span>';
+                            }
+                        }
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.email || 'No email'}</td>
+                            <td>${user.name || 'No name'}</td>
+                            <td>${user.phoneNumber || 'No phone'}</td>
+                            <td>${formattedDate} ${badge}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-info view-user-details" data-id="${user.id}">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        `;
+                        
+                        usersList.appendChild(row);
+                    });
+                    
+                    // Add event listeners to view user buttons
+                    document.querySelectorAll('.view-user-details').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const userId = e.target.closest('.view-user-details').dataset.id;
+                            showUserDetails(userId);
+                        });
+                    });
+                })
+                .catch((error) => {
+                    loadingUsers.style.display = 'none';
+                    console.error("Error loading users: ", error);
+                    usersList.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error loading users.</td></tr>';
+                });
+        }
+        
+        // Show user details modal
+        function showUserDetails(userId) {
+            const userDetailsContent = document.getElementById('userDetailsContent');
+            userDetailsContent.innerHTML = `
+                <div class="text-center p-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Loading user details...</p>
+                </div>
+            `;
+            
+            userDetailsModal.show();
+            
+            usersRef.child(userId).once('value')
+                .then((snapshot) => {
+                    const user = snapshot.val();
+                    if (!user) {
+                        userDetailsContent.innerHTML = `
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                User not found.
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    const registrationDate = user.registrationDate ? new Date(user.registrationDate).toLocaleString() : 'Unknown';
+                    
+                    userDetailsContent.innerHTML = `
+                        <div class="text-center mb-4">
+                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=6200ee&color=fff&size=128" 
+                                class="rounded-circle mb-3" alt="${user.name || 'User'}" width="128" height="128">
+                            <h4>${user.name || 'No Name'}</h4>
+                        </div>
+                        
+                        <div class="user-details">
+                            <div class="mb-3">
+                                <label class="fw-bold"><i class="fas fa-envelope me-2 text-primary"></i>Email:</label>
+                                <div>${user.email || 'No email'}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="fw-bold"><i class="fas fa-phone me-2 text-primary"></i>Phone Number:</label>
+                                <div>${user.phoneNumber || 'No phone number'}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i>Registered:</label>
+                                <div>${registrationDate}</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="fw-bold"><i class="fas fa-id-card me-2 text-primary"></i>User ID:</label>
+                                <div><small class="text-muted">${userId}</small></div>
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch((error) => {
+                    console.error("Error getting user details: ", error);
+                    userDetailsContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Error loading user details: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+        
+        // Handle user search
+        userSearchBtn.addEventListener('click', () => {
+            const searchTerm = userSearchInput.value.trim();
+            loadUsers(searchTerm);
+        });
+        
+        // Search on enter key
+        userSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                userSearchBtn.click();
+            }
+        });
+        
+        // Clear search
+        userSearchInput.addEventListener('input', () => {
+            if (userSearchInput.value.trim() === '') {
+                loadUsers();
+            }
+        });
+        
+        // Add a new banner
+        addBannerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('bannerTitle').value;
+            const imageUrl = document.getElementById('bannerImageUrl').value;
+            const linkUrl = document.getElementById('bannerLinkUrl').value;
+            const order = parseInt(document.getElementById('bannerOrder').value);
+            const active = document.getElementById('bannerActive').checked;
+            
+            // Create a new banner object
+            const newBanner = {
+                title,
+                imageUrl,
+                linkUrl,
+                order,
+                active
+            };
+            
+            // Push the new banner to Firebase
+            bannersRef.push(newBanner)
+                .then(() => {
+                    // Clear the form
+                    addBannerForm.reset();
+                    // Reset preview
+                    document.getElementById('banner-preview-image').src = "https://via.placeholder.com/600x320/f5f5f5/6c757d?text=Banner+Preview";
+                    document.getElementById('banner-preview-title').textContent = "";
+                    
+                    showAlert('success', 'Advertisement added successfully!');
+                    
+                    // Refresh the dashboard counters
+                    loadStats();
+                    loadActiveBanners();
+                })
+                .catch((error) => {
+                    console.error("Error adding banner: ", error);
+                    showAlert('danger', 'Error adding advertisement: ' + error.message);
+                });
+        });
+        
+        // Load banners from Firebase
+        function loadBanners() {
+            bannersRef.orderByChild('order').on('value', (snapshot) => {
+                // Clear the banners list
+                bannersList.innerHTML = '';
+                
+                if (!snapshot.exists()) {
+                    bannersList.innerHTML = '<div class="col-12 text-center"><p>No advertisements found. Add your first advertisement above!</p></div>';
+                    loadingBanners.style.display = 'none';
+                    return;
+                }
+                
+                // Loop through each banner
+                snapshot.forEach((childSnapshot) => {
+                    const bannerId = childSnapshot.key;
+                    const banner = childSnapshot.val();
+                    
+                    // Create a card for each banner
+                    const bannerCard = document.createElement('div');
+                    bannerCard.className = 'col-md-4 mb-4';
+                    bannerCard.innerHTML = `
+                        <div class="card h-100">
+                            <div class="position-relative">
+                                <div class="banner-preview">
+                                    <img src="${banner.imageUrl}" class="banner-image" alt="${banner.title}">
+                                    <span class="banner-order">${banner.order}</span>
+                                    <span class="banner-status ${banner.active ? 'active' : 'inactive'}">
+                                        ${banner.active ? 'Active' : 'Inactive'}
+                                    </span>
+                                    <div class="banner-advertisement-label">Advertisement</div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">${banner.title}</h5>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        Link: ${banner.linkUrl ? banner.linkUrl : 'None'}
+                                    </small>
+                                </p>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-sm btn-outline-primary edit-banner" data-id="${bannerId}">
+                                        <i class="fas fa-edit me-1"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger delete-banner" data-id="${bannerId}">
+                                        <i class="fas fa-trash-alt me-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    bannersList.appendChild(bannerCard);
+                });
+                
+                // Hide the loading spinner
+                loadingBanners.style.display = 'none';
+                
+                // Add event listeners to edit and delete buttons
+                document.querySelectorAll('.edit-banner').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const bannerId = e.target.closest('.edit-banner').dataset.id;
+                        openEditModal(bannerId);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-banner').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const bannerId = e.target.closest('.delete-banner').dataset.id;
+                        openDeleteModal(bannerId);
+                    });
+                });
+            });
+        }
+        
+        // Open the edit modal and fill with banner data
+        function openEditModal(bannerId) {
+            const bannerRef = bannersRef.child(bannerId);
+            
+            bannerRef.once('value', (snapshot) => {
+                const banner = snapshot.val();
+                
+                // Fill the form with banner data
+                document.getElementById('editBannerId').value = bannerId;
+                document.getElementById('editBannerTitle').value = banner.title;
+                document.getElementById('editBannerImageUrl').value = banner.imageUrl;
+                document.getElementById('editBannerLinkUrl').value = banner.linkUrl || '';
+                document.getElementById('editBannerOrder').value = banner.order;
+                document.getElementById('editBannerActive').checked = banner.active;
+                
+                // Update preview
+                document.getElementById('edit-banner-preview-image').src = banner.imageUrl;
+                
+                // Show the modal
+                editBannerModal.show();
+            });
+        }
+        
+        // Save banner changes
+        document.getElementById('saveBannerChanges').addEventListener('click', () => {
+            const bannerId = document.getElementById('editBannerId').value;
+            const title = document.getElementById('editBannerTitle').value;
+            const imageUrl = document.getElementById('editBannerImageUrl').value;
+            const linkUrl = document.getElementById('editBannerLinkUrl').value;
+            const order = parseInt(document.getElementById('editBannerOrder').value);
+            const active = document.getElementById('editBannerActive').checked;
+            
+            // Update the banner in Firebase
+            bannersRef.child(bannerId).update({
+                title,
+                imageUrl,
+                linkUrl,
+                order,
+                active
+            }).then(() => {
+                editBannerModal.hide();
+                showAlert('success', 'Advertisement updated successfully!');
+                
+                // Refresh dashboard data
+                loadStats();
+                loadActiveBanners();
+            }).catch((error) => {
+                console.error("Error updating banner: ", error);
+                showAlert('danger', 'Error updating advertisement: ' + error.message);
+            });
+        });
+        
+        // Open the delete confirmation modal
+        function openDeleteModal(bannerId) {
+            document.getElementById('deleteBannerId').value = bannerId;
+            deleteBannerModal.show();
+        }
+        
+        // Delete a banner
+        document.getElementById('confirmDelete').addEventListener('click', () => {
+            const bannerId = document.getElementById('deleteBannerId').value;
+            
+            // Delete the banner from Firebase
+            bannersRef.child(bannerId).remove()
+                .then(() => {
+                    deleteBannerModal.hide();
+                    showAlert('success', 'Advertisement deleted successfully!');
+                    
+                    // Refresh dashboard data
+                    loadStats();
+                    loadActiveBanners();
+                })
+                .catch((error) => {
+                    console.error("Error deleting banner: ", error);
+                    showAlert('danger', 'Error deleting advertisement: ' + error.message);
+                });
+        });
+        
+        // Show alert message
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show fixed-top w-75 mx-auto mt-3`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Automatically remove the alert after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auth state is handled by onAuthStateChanged listener
+            
+            // Set up image URL preview
+            const bannerImageUrlInput = document.getElementById('bannerImageUrl');
+            const bannerTitleInput = document.getElementById('bannerTitle');
+            const previewImage = document.getElementById('banner-preview-image');
+            
+            bannerImageUrlInput.addEventListener('input', updatePreview);
+            bannerTitleInput.addEventListener('input', updatePreview);
+            
+            function updatePreview() {
+                const imageUrl = bannerImageUrlInput.value;
+                
+                if (imageUrl) {
+                    previewImage.src = imageUrl;
+                } else {
+                    previewImage.src = "https://via.placeholder.com/600x320/f5f5f5/6c757d?text=Banner+Preview";
+                }
+            }
+            
+            // Set up edit form preview
+            const editBannerImageUrlInput = document.getElementById('editBannerImageUrl');
+            const editPreviewImage = document.getElementById('edit-banner-preview-image');
+            
+            editBannerImageUrlInput.addEventListener('input', updateEditPreview);
+            
+            function updateEditPreview() {
+                const imageUrl = editBannerImageUrlInput.value;
+                
+                if (imageUrl) {
+                    editPreviewImage.src = imageUrl;
+                } else {
+                    editPreviewImage.src = "https://via.placeholder.com/600x320/f5f5f5/6c757d?text=Banner+Preview";
+                }
+            }
+            
+            // Notification System
+            
+            // Reference to notifications collection in Firebase
+            const notificationsRef = firebase.database().ref('notifications');
+            
+            // Elements for notification preview
+            const notificationTitle = document.getElementById('notificationTitle');
+            const notificationBody = document.getElementById('notificationBody');
+            const notificationImage = document.getElementById('notificationImage');
+            const notificationPreview = document.getElementById('notificationPreview');
+            const previewTitle = document.querySelector('.preview-title');
+            const previewBody = document.querySelector('.preview-body');
+            const previewImageContainer = document.querySelector('.preview-image-container');
+            const previewImageElement = document.querySelector('.preview-image');
+            
+            // Show/hide schedule time input based on checkbox
+            const scheduleNotification = document.getElementById('scheduleNotification');
+            const scheduleTimeContainer = document.getElementById('scheduleTimeContainer');
+            
+            scheduleNotification.addEventListener('change', function() {
+                scheduleTimeContainer.style.display = this.checked ? 'block' : 'none';
+            });
+            
+            // Update notification preview in real-time
+            function updateNotificationPreview() {
+                const title = notificationTitle.value.trim();
+                const body = notificationBody.value.trim();
+                const imageUrl = notificationImage.value.trim();
+                
+                if (title || body) {
+                    notificationPreview.style.display = 'block';
+                    previewTitle.textContent = title || 'Notification Title';
+                    previewBody.textContent = body || 'Notification message will appear here.';
+                    
+                    if (imageUrl) {
+                        previewImageContainer.style.display = 'block';
+                        previewImageElement.src = imageUrl;
+                    } else {
+                        previewImageContainer.style.display = 'none';
+                    }
+                } else {
+                    notificationPreview.style.display = 'none';
+                }
+            }
+            
+            // Add event listeners for live preview
+            notificationTitle.addEventListener('input', updateNotificationPreview);
+            notificationBody.addEventListener('input', updateNotificationPreview);
+            notificationImage.addEventListener('input', updateNotificationPreview);
+            
+            // Handle notification form submission
+            const sendNotificationForm = document.getElementById('sendNotificationForm');
+            
+            sendNotificationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const title = notificationTitle.value.trim();
+                const body = notificationBody.value.trim();
+                const imageUrl = notificationImage.value.trim() || null;
+                const action = document.getElementById('notificationAction').value;
+                const notificationType = document.querySelector('input[name="notificationType"]:checked').value;
+                
+                // Check if scheduling
+                const isScheduled = scheduleNotification.checked;
+                const scheduleTime = isScheduled ? new Date(document.getElementById('scheduleTime').value).getTime() : null;
+                
+                // Validate form
+                if (!title || !body) {
+                    showAlert('danger', 'Please provide both title and message for the notification.');
+                    return;
+                }
+                
+                if (isScheduled && !scheduleTime) {
+                    showAlert('danger', 'Please select a valid schedule time.');
+                    return;
+                }
+                
+                // Confirm before sending
+                if (confirm(`Are you sure you want to send this notification to ${notificationType === 'all' ? 'ALL' : notificationType === 'new' ? 'NEW' : 'INACTIVE'} users?`)) {
+                    // Create notification object
+                    const notification = {
+                        title,
+                        body,
+                        imageUrl,
+                        action,
+                        targetType: notificationType,
+                        scheduledTime: scheduleTime,
+                        sentTime: isScheduled ? null : Date.now(),
+                        status: isScheduled ? 'scheduled' : 'sent',
+                        sentBy: firebase.auth().currentUser.email
+                    };
+                    
+                    // Save to Firebase
+                    notificationsRef.push(notification)
+                        .then(async () => {
+                            // Call the Cloud Function that sends the FCM notification
+                            await sendFCMNotification(title, body, imageUrl, null);
+                            
+                            // Reset form and show success message
+                            sendNotificationForm.reset();
+                            notificationPreview.style.display = 'none';
+                            scheduleTimeContainer.style.display = 'none';
+                            
+                            showAlert('success', isScheduled ? 
+                                'Notification scheduled successfully!' : 
+                                'Notification sent successfully!');
+                                
+                            // Reload notifications list
+                            loadNotifications();
+                        })
+                        .catch((error) => {
+                            console.error("Error saving notification: ", error);
+                            showAlert('danger', 'Error saving notification: ' + error.message);
+                        });
+                }
+            });
+            
+            // Function to send FCM notification using HTTP v1 API
+            async function sendFCMNotification(title, body, imageUrl, tokens) {
+                try {
+                    // Check if the user is authenticated
+                    const user = firebase.auth().currentUser;
+                    if (!user) {
+                        throw new Error("You must be logged in to send notifications");
+                    }
+                    
+                    // Get the ID token for authentication
+                    const idToken = await user.getIdToken();
+                    
+                    // Prepare the notification message payload
+                    const message = {
+                        notification: {
+                            title: title,
+                            body: body
+                        },
+                        android: {
+                            notification: {
+                                icon: 'ic_launcher_foreground',
+                                color: '#6200EE',
+                                sound: 'default'
+                            }
+                        },
+                        apns: {
+                            payload: {
+                                aps: {
+                                    sound: 'default'
+                                }
+                            }
+                        }
+                    };
+                    
+                    // Add image if provided
+                    if (imageUrl) {
+                        message.notification.image = imageUrl;
+                        message.android.notification.image = imageUrl;
+                    }
+                    
+                    // If tokens array is provided, send to specific devices
+                    const fcmPayload = tokens && tokens.length > 0 
+                        ? { message: { ...message, token: tokens[0] } }  // For individual target
+                        : { message: { ...message, topic: 'all' } };     // For topic-based targeting
+                    
+                    // Create multiple messages if more than one token
+                    if (tokens && tokens.length > 1) {
+                        // We'll handle batching through Cloud Functions
+                        fcmPayload.additionalTokens = tokens.slice(1);
+                    }
+                    
+                    // Make a request to our Firebase Function that will handle FCM calls
+                    // This avoids exposing FCM credentials in client-side code
+                    // You need to deploy a Cloud Function for this to work (see below)
+                    const functionUrl = 'https://us-central1-grozily-user.cloudfunctions.net/sendNotification';
+                    
+                    const response = await fetch(functionUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + idToken
+                        },
+                        body: JSON.stringify(fcmPayload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log('FCM notification sent successfully:', result);
+                    return result;
+                } catch (error) {
+                    console.error('Error sending FCM notification:', error);
+                    throw error;
+                }
+            }
+            
+            // Load notifications from Firebase
+            function loadNotifications() {
+                const loadingNotifications = document.getElementById('loadingNotifications');
+                const notificationsList = document.getElementById('notificationsList');
+                const noNotificationsMessage = document.getElementById('noNotificationsMessage');
+                
+                loadingNotifications.style.display = 'block';
+                notificationsList.innerHTML = '';
+                noNotificationsMessage.style.display = 'none';
+                
+                notificationsRef.orderByChild('sentTime').limitToLast(10).once('value')
+                    .then((snapshot) => {
+                        loadingNotifications.style.display = 'none';
+                        
+                        if (!snapshot.exists()) {
+                            noNotificationsMessage.style.display = 'block';
+                            return;
+                        }
+                        
+                        // Convert to array for reverse sorting (newest first)
+                        let notificationsArray = [];
+                        snapshot.forEach((childSnapshot) => {
+                            const notificationId = childSnapshot.key;
+                            const notification = childSnapshot.val();
+                            notification.id = notificationId;
+                            notificationsArray.push(notification);
+                        });
+                        
+                        // Sort by sent time (or scheduled time if not sent yet), newest first
+                        notificationsArray.sort((a, b) => {
+                            const timeA = a.sentTime || a.scheduledTime;
+                            const timeB = b.sentTime || b.scheduledTime;
+                            return timeB - timeA;
+                        });
+                        
+                        // Display notifications
+                        notificationsArray.forEach(notification => {
+                            const sentTime = notification.sentTime ? 
+                                new Date(notification.sentTime).toLocaleString() : 
+                                'Scheduled: ' + new Date(notification.scheduledTime).toLocaleString();
+                            
+                            const notificationElement = document.createElement('div');
+                            notificationElement.className = 'card mb-3 notification-item';
+                            notificationElement.innerHTML = `
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">${notification.title}</h6>
+                                        <span class="badge ${notification.status === 'sent' ? 'bg-success' : notification.status === 'scheduled' ? 'bg-warning' : 'bg-secondary'}">
+                                            ${notification.status}
+                                        </span>
+                                    </div>
+                                    <p class="small mb-2">${notification.body}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Target: ${notification.targetType === 'all' ? 'All Users' : 
+                                            notification.targetType === 'new' ? 'New Users' : 'Inactive Users'}</small>
+                                        <small class="text-muted">${sentTime}</small>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            notificationsList.appendChild(notificationElement);
+                        });
+                        
+                        // Update analytics
+                        document.getElementById('totalNotificationsCount').textContent = notificationsArray.length;
+                        
+                        // Simple simulation for delivery and open stats
+                        // In a real app, you would track these through FCM analytics
+                        const sentCount = notificationsArray.filter(n => n.status === 'sent').length;
+                        document.getElementById('deliveredCount').textContent = sentCount;
+                        document.getElementById('openedCount').textContent = Math.floor(sentCount * 0.7); // Assume 70% open rate
+                    })
+                    .catch((error) => {
+                        loadingNotifications.style.display = 'none';
+                        console.error("Error loading notifications: ", error);
+                        notificationsList.innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                Error loading notifications: ${error.message}
+                            </div>
+                        `;
+                    });
+            }
+            
+            // Load notifications when the section is shown
+            document.querySelector('.sidebar-menu-item[data-section="notificationsSection"]').addEventListener('click', () => {
+                loadNotifications();
+            });
+        });
+    </script>
+</body>
+</html> 
